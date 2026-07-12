@@ -1,0 +1,10 @@
+{
+  "alert_id": "SAMPLE-001",
+  "source": "DeviceLogonEvents",
+  "account_name": "svc-backup",
+  "device_name": "SQL-PROD-02",
+  "logon_type": "RemoteInteractive",
+  "distinct_hosts_touched": 9,
+  "time_window_minutes": 45,
+  "detection_source": "Defender for Endpoint"
+}

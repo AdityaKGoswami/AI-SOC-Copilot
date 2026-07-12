@@ -1,0 +1,9 @@
+{
+  "alert_id": "BENIGN-001",
+  "source": "SigninLogs",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  "filename": "Q3_financial_summary.xlsx",
+  "command_line": "excel.exe Q3_financial_summary.xlsx",
+  "device_name": "FIN-WORKSTATION-03",
+  "detection_source": "Azure AD"
+}
