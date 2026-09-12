@@ -1,0 +1,75 @@
+[
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:01:12Z",
+    "host": "VPN-GW-01",
+    "user": "j.smith",
+    "event_type": "failed_login",
+    "source_ip": "185.220.101.44",
+    "details": "Invalid password"
+  },
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:01:20Z",
+    "host": "VPN-GW-01",
+    "user": "j.smith",
+    "event_type": "failed_login",
+    "source_ip": "185.220.101.44",
+    "details": "Invalid password"
+  },
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:01:27Z",
+    "host": "VPN-GW-01",
+    "user": "j.smith",
+    "event_type": "failed_login",
+    "source_ip": "185.220.101.44",
+    "details": "Invalid password"
+  },
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:02:04Z",
+    "host": "VPN-GW-01",
+    "user": "j.smith",
+    "event_type": "successful_login",
+    "source_ip": "185.220.101.44",
+    "details": "VPN login succeeded"
+  },
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:04:31Z",
+    "host": "WS-FIN-014",
+    "user": "j.smith",
+    "event_type": "process_start",
+    "source_ip": "185.220.101.44",
+    "command": "powershell.exe -EncodedCommand SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAI...")
+  },
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:05:02Z",
+    "host": "WS-FIN-014",
+    "user": "j.smith",
+    "event_type": "credential_access",
+    "source_ip": "185.220.101.44",
+    "details": "LSASS memory access by unsigned process"
+  },
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:08:44Z",
+    "host": "WS-FIN-014",
+    "user": "j.smith",
+    "event_type": "lateral_movement",
+    "source_ip": "10.20.14.27",
+    "source_host": "WS-FIN-014",
+    "destination_host": "FS-01"
+  },
+  {
+    "incident_id": "SIM-APT-001",
+    "timestamp": "2026-09-12T09:12:19Z",
+    "host": "FS-01",
+    "user": "svc_backup",
+    "event_type": "persistence",
+    "source_ip": "10.20.14.27",
+    "details": "New scheduled task created: WindowsUpdateCheck"
+  }
+]
