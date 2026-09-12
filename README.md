@@ -1,79 +1,143 @@
-<div align="center">
+# Build Your Own AI Security Analyst
 
-# AI SOC Copilot
+A runnable defensive cybersecurity project that investigates a simulated multi-stage intrusion from raw telemetry to an analyst-ready incident report.
 
-**An LLM-powered alert triage assistant — built with prompt-injection defense as a first-class feature, not an afterthought.**
+## What this project demonstrates
 
-![Python](https://img.shields.io/badge/Python-0d1012?style=flat-square&logo=python&logoColor=4dd4e8&labelColor=0d1012)
-![Claude](https://img.shields.io/badge/Claude%20API-0d1012?style=flat-square&logoColor=4dd4e8&labelColor=0d1012)
-![OpenAI](https://img.shields.io/badge/OpenAI%20API-0d1012?style=flat-square&logo=openai&logoColor=4dd4e8&labelColor=0d1012)
-![License](https://img.shields.io/badge/License-MIT-0d1012?style=flat-square&labelColor=0d1012&color=4dd4e8)
+```text
+Simulated telemetry
+        ↓
+Detection-as-code
+        ↓
+Evidence correlation
+        ↓
+AI-style analyst reasoning
+        ↓
+Severity + ATT&CK mapping
+        ↓
+Recommended response
+        ↓
+Incident report
+```
 
-</div>
+The default path is deterministic and local. No LLM API key is required to run the investigation. This is intentional: the detection and evidence pipeline should remain reproducible instead of making the demo dependent on an external model.
 
-<br/>
+## Attack scenario
 
-## Why this exists
+The included dataset models a simple enterprise intrusion:
 
-"AI SOC copilots" are the direction the whole industry is moving — CrowdStrike Charlotte AI, IBM ATOM, Google's agentic defense layer all do some version of LLM-assisted triage. But feeding attacker-controlled log data (filenames, User-Agent strings, process command lines) directly into an LLM prompt creates a real, documented risk: **prompt injection**, currently ranked #1 on the OWASP Top 10 for LLM Applications. An attacker who knows a SOC uses AI triage can plant instructions inside a filename hoping the model follows them instead of analyzing them.
+1. Repeated VPN authentication failures.
+2. Successful authentication from the same external source.
+3. Encoded PowerShell execution on a workstation.
+4. Credential access through LSASS.
+5. Lateral movement from the workstation to a file server.
+6. Persistence through a scheduled task.
 
-This project is a small, working demonstration of both sides of that problem: a functional triage pipeline, and a defense layer that's actually tested against real injection attempts — not just claimed.
+All telemetry is simulated and safe for local testing.
 
-<br/>
+## Project structure
 
-## How the defense works
+```text
+AI-SOC-Copilot/
+├── app.py                         # Streamlit analyst dashboard
+├── cli.py                         # Original CLI triage entry point
+├── copilot/
+│   ├── ai_analyst.py              # Evidence-based analyst reasoning
+│   ├── detector.py                # Detection rules
+│   ├── investigation.py           # End-to-end investigation pipeline
+│   ├── reporting.py               # Markdown incident report generation
+│   ├── sanitizer.py               # Prompt-injection defense layer
+│   ├── schema.py                  # Structured-output validation
+│   ├── triage.py                  # Optional LLM alert-triage path
+│   └── llm_provider.py            # Anthropic/OpenAI/mock adapters
+├── data/
+│   └── simulated_attack.json      # Safe synthetic telemetry
+├── samples/
+│   └── example_alert.json         # Original triage sample
+└── tests/
+    ├── test_investigation.py     # End-to-end investigation tests
+    └── adversarial_samples/       # Prompt-injection test cases
+```
 
-1. **Sanitizer** (`copilot/sanitizer.py`) — every untrusted field is length-capped and scanned for known injection patterns. Matches are *flagged*, not silently stripped, so a SOC analyst can see that an injection attempt was made — that's a signal worth attention in its own right.
-2. **Enforced trust boundary in the prompt** (`copilot/triage.py`) — untrusted alert content is wrapped in an explicit `<ALERT_DATA>` block, and the system prompt repeatedly and explicitly instructs the model to treat everything inside it as data, never as instructions, regardless of what it claims to be.
-3. **Strict output validation** (`copilot/schema.py`) — the model's response must match an exact schema. A response that breaks format (which is often what a successful injection looks like from the outside) is treated as a **failed triage**, not silently accepted.
+## Run locally
 
-<br/>
-
-## Proof, not just claims
-
-`tests/test_sanitizer_defense.py` runs the sanitizer against three real adversarial samples — injection attempts hidden in a filename, a User-Agent header, and a process command line — plus a benign control sample to check for false positives. Run it yourself:
+### 1. Clone
 
 ```bash
-python tests/test_sanitizer_defense.py
-```
-
-```
-✅ PASS — injection_in_command_line.json: sanitizer flagged 1 field(s)
-✅ PASS — injection_in_filename.json: sanitizer flagged 1 field(s)
-✅ PASS — injection_in_user_agent.json: sanitizer flagged 1 field(s)
-
-3/3 adversarial samples correctly flagged.
-```
-
-This runs entirely offline — no API key required — because the sanitizer defense shouldn't depend on model behavior to be verifiable.
-
-<br/>
-
-## Running it
-
-```bash
-git clone https://github.com/Aditya-Sec/AI-SOC-Copilot.git
+git clone https://github.com/AdityaKGoswami/AI-SOC-Copilot.git
 cd AI-SOC-Copilot
-pip install -r requirements.txt
-cp .env.example .env
 ```
 
-**Try it with zero setup** (mock mode, no API key needed):
+### 2. Create a virtual environment
+
+Windows:
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+Linux/macOS:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the investigation dashboard
+
+```bash
+streamlit run app.py
+```
+
+Then open the local Streamlit URL shown in the terminal.
+
+### 5. Run the tests
+
+```bash
+pytest -q
+```
+
+### 6. Run the original alert-triage CLI in mock mode
+
 ```bash
 python cli.py samples/example_alert.json
-python cli.py tests/adversarial_samples/injection_in_filename.json
 ```
 
-**For real analysis**, set `LLM_PROVIDER=anthropic` (or `openai`) in `.env` and add your API key.
+## Optional LLM mode
 
-<br/>
+The project retains the original provider abstraction for LLM-assisted alert triage. Set one of these in `.env`:
 
-## What's deliberately out of scope
+```env
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=your_key
+```
 
-This is a triage *assistant*, not an autonomous responder — it doesn't take any containment action itself, by design. Given how new and fast-moving agentic-SOC tooling is, keeping a human in the loop for anything beyond classification/recommendation is the more defensible design choice, not a limitation.
+or
 
-<br/>
+```env
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your_key
+```
+
+The LLM layer is deliberately separated from the deterministic investigation pipeline. This makes it possible to compare model reasoning against fixed detection evidence instead of letting the model become the only source of truth.
+
+## Security design
+
+The project also demonstrates a second security problem: attacker-controlled log data can contain prompt-injection text. The existing triage path therefore sanitizes untrusted fields, wraps alert data in an explicit trust boundary, and validates structured model output before accepting it. See `copilot/sanitizer.py`, `copilot/triage.py`, and `copilot/schema.py`.
+
+The system does not perform autonomous containment. Response actions are presented as recommendations for a human analyst.
+
+## Important limitation
+
+This is a lab and portfolio project, not a production SOC platform. Detection logic is intentionally small and transparent, the dataset is synthetic, and the AI analyst is constrained by the evidence available in the test scenario.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT
